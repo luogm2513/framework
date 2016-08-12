@@ -7,6 +7,7 @@ import java.nio.channels.ClosedChannelException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -21,6 +22,13 @@ import com.nazir.exception.ParamException;
 import com.nazir.model.enums.BizStatusEnum;
 import com.nazir.utils.RestLogUtils;
 
+/**
+ * @Type ExceptionResolver
+ * @Desc 统一异常处理
+ * @author luogm
+ * @date 2016-08-08
+ * @version 1.0
+ */
 public class ExceptionResolver implements HandlerExceptionResolver {
 	
     private static final Logger logger = LoggerFactory.getLogger(ExceptionResolver.class);
@@ -32,7 +40,11 @@ public class ExceptionResolver implements HandlerExceptionResolver {
         // 安全问题
         if (ex instanceof CertificateException) {
             error.setCode(BizStatusEnum.SYS_NOT_PERMISSION.getCodeEnum().getCode());
-            error.setMessage(BizStatusEnum.SYS_NOT_PERMISSION.getMessage());
+            if(StringUtils.isNotBlank(ex.getMessage())) {
+            	error.setMessage(ex.getMessage());
+            } else {
+            	error.setMessage(BizStatusEnum.SYS_NOT_PERMISSION.getMessage());
+            }
             RestLogUtils.writeExceptionResolverByInfo(request, ex, logger);
             RestLogUtils.writeRestLogByInfo(request, error);
         }

@@ -12,10 +12,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.nazir.dao.user.dataobject.UserLoginDO;
 import com.nazir.exception.CertificateException;
+import com.nazir.exception.ParamException;
 import com.nazir.reqinfo.ReqHead;
 import com.nazir.reqinfo.ReqParam;
 import com.nazir.service.base.ResponseDO;
-import com.nazir.service.user.UserService;
+import com.nazir.service.user.UserLoginService;
 import com.nazir.utils.IPUtils;
 import com.nazir.utils.UrlRightConstant;
 
@@ -32,7 +33,7 @@ public class MvcTokenInterceptor implements HandlerInterceptor {
     private final String USER_LOGIN_ID = "user_login_id";
     
     @Autowired
-    private UserService userService;
+    private UserLoginService userLoginService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object arg) throws Exception {
@@ -94,13 +95,19 @@ public class MvcTokenInterceptor implements HandlerInterceptor {
         	// Step3.2 验证ip和浏览器，判断是否是在其他地方登录过导致的token失效，还可以根据IP获取地区，判断是否是异地登录（需要设计常用地址）
         	// 当token更新时间在本次操作前X时间内，提示当前账号已在其他终端登录，如果ip为异地，警告异地登录
         	// 否则超过X时间，只提示token失效。如果ip为异地，告知，该账号曾在异地登录过。
-        	ResponseDO<UserLoginDO> responeDO = userService.getUserLoginByLoginId(loginId);
-        	if(responeDO.isSuccess()) {
-        		String lastAccessToken = responeDO.getDataResult().getAccessToken();
-        		if(!lastAccessToken.equals(accessToken)) {
-        			throw new CertificateException("access_token is not right");
+        	if(StringUtils.isNotBlank(loginId)) {
+        		ResponseDO<UserLoginDO> responeDO = userLoginService.getUserLoginByLoginId(loginId);
+        		if(responeDO.isSuccess() && responeDO.getDataResult() != null) {
+        			String lastAccessToken = responeDO.getDataResult().getAccessToken();
+        			if(lastAccessToken != null && accessToken.equals(lastAccessToken)) {
+        				return ;
+        			}
+        		} else {
+        			throw new CertificateException("access_token错误！");
         		}
-        	}
+        	} else {
+    			throw new ParamException("request_header：user_login_id为空");
+    		}
         	
         }
     }

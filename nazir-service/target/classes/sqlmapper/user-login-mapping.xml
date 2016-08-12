@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nazir.dao.user.UserLoginDao">
-	<select id="getByLoginId" resultType="com.nazir.dao.user.dataobject.UserLoginDO">
-		SELECT login_id as loginId, access_token as accessToken, gmt_modified as gmtModified
+	<select id="getByLoginAccount" resultType="com.nazir.dao.user.dataobject.UserLoginDO">
+		SELECT user_id as userId, login_account as loginAccount, access_token as accessToken, gmt_modified as gmtModified
         FROM user_login
-        WHERE login_id = #{loginId}
+        WHERE login_account = #{loginAccount}
 	</select>
 	<!-- 更新一条记录 -->  
     <update id="update" parameterType="com.nazir.dao.user.dataobject.UserLoginDO">  
         update user_login 
         set access_token = #{accessToken}, gmt_modified = NOW()
-        where login_id = #{loginId}
-    </update>  
+        where user_id = #{userId}
+    </update>
+    <insert id="insert" parameterType="com.nazir.service.user.dataobject.UserLoginPO">
+		INSERT INTO user_login (user_id, login_account, access_token, gmt_created, gmt_modified)
+		VALUES (#{userId}, #{loginAccount}, #{accessToken}, NOW(), NOW())
+	</insert>
 </mapper>

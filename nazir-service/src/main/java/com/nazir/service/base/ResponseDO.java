@@ -11,7 +11,7 @@ package com.nazir.service.base;
 public class ResponseDO<T> {
 
     /**
-     * 返回code 0：成功 1：异常 2：业务错误 xxx:其他自定义code
+     * 返回code 0：成功 1：业务错误 （有异常，直接抛出自定义异常，框架层捕获处理）
      */
     private String code = ResponseCode.SUCCESS;
 

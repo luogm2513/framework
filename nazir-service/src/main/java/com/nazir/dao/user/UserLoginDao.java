@@ -1,6 +1,7 @@
 package com.nazir.dao.user;
 
 import com.nazir.dao.user.dataobject.UserLoginDO;
+import com.nazir.service.user.dataobject.UserLoginPO;
 
 /**
  * @author luogm
@@ -8,7 +9,9 @@ import com.nazir.dao.user.dataobject.UserLoginDO;
  */
 public interface UserLoginDao {
 	
-	public UserLoginDO getByLoginId(String loginId);
+	public UserLoginDO getByLoginAccount(String loginId);
 	
 	public Integer update(UserLoginDO userLoginDO);
+	
+	public Integer insert(UserLoginPO userLoginPO);
 }

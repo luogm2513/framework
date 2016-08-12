@@ -40,9 +40,8 @@ public class RestLogUtils {
             if (resultObject instanceof AbstractFlagModel) {
             	SimpleFlagModel simpleFlagModel = new SimpleFlagModel();
                 simpleFlagModel.setCode(((AbstractFlagModel) resultObject).getCode());
-                simpleFlagModel.setFlag(((AbstractFlagModel) resultObject).getFlag());
                 simpleFlagModel.setMessage(((AbstractFlagModel) resultObject).getMessage());
-                if ("0".equals(simpleFlagModel.getCode()) && "0".equals(simpleFlagModel.getFlag())) {
+                if ("0".equals(simpleFlagModel.getCode())) {
                     RestLogUtils.writeRestLogByInfo(reqParam, simpleFlagModel,
                             (Date) request.getAttribute("req_time"), false);
                 } else {

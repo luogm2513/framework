@@ -6,20 +6,27 @@ package com.nazir.service.user.dataobject;
  */
 public class UserLoginPO {
 	
-    private String loginId;
-    private String password;
+	private Long userId;
+    private String loginAccount;
+    private String accessToken;
     
-	public String getLoginId() {
-		return loginId;
+    public Long getUserId() {
+    	return userId;
+    }
+    public void setUserId(Long userId) {
+    	this.userId = userId;
+    }
+	public String getAccessToken() {
+		return accessToken;
 	}
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
-	public String getPassword() {
-		return password;
+	public String getLoginAccount() {
+		return loginAccount;
 	}
-	public void setPassword(String password) {
-		this.password = password;
+	public void setLoginAccount(String loginAccount) {
+		this.loginAccount = loginAccount;
 	}
     
 }

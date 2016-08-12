@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nazir.dao.user.UserBehaviorDao">
+    <insert id="insert" parameterType="com.nazir.service.user.dataobject.UserBehaviorPO">
+		INSERT INTO user_behavior_log (user_id, login_account, behavior_type, behavior_desc, ip, agent, gmt_created, gmt_modified)
+		VALUES (#{userId}, #{loginAccount}, #{behaviorType}, #{behaviorDesc}, #{ip}, #{agent}, NOW(), NOW())
+	</insert>
+</mapper>

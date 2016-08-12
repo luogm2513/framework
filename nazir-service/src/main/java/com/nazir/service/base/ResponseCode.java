@@ -15,14 +15,9 @@ public class ResponseCode {
     public static final String SUCCESS = "0";
 
     /**
-     * 返回code 1：异常
-     */
-    public static final String EXCEPTION = "1";
-
-    /**
      * 返回code 2：业务错误
      */
-    public static final String ERROR = "2";
+    public static final String ERROR = "-1";
 
     /**
      * 判断是否成功

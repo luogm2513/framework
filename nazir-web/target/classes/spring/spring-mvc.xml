@@ -19,30 +19,6 @@
 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">  
 		<property name="urlDecode" value="true"/>  
 	</bean>
-
-	<!-- MVC拦截器控制 -->
-	<mvc:interceptors>
-		<!-- 多个拦截器,顺序执行 -->
-		<mvc:interceptor>
-			<mvc:mapping path="/**" />
-			<bean
-				class="com.nazir.interceptor.MvcTokenInterceptor">
-			</bean>
-		</mvc:interceptor>
-	</mvc:interceptors>
-
-	<!-- 验证拦截器 -->
-	<bean id="validateInterceptor" class="com.nazir.interceptor.ParamValidateInterceptor" />
-	<!-- spring拦截器控制 -->
-	<aop:config>
-		<aop:pointcut id="controllerOperation"
-			expression="execution(* com.nazir.controllers..*Controller.*(..))" />
-		<aop:advisor advice-ref="validateInterceptor"
-			pointcut-ref="controllerOperation" />
-	</aop:config>
-
-	<!-- 异常拦截器 -->
-	<bean id="exceptionResolver" class="com.nazir.interceptor.ExceptionResolver" />
 	
 	<bean id="objectMapper" class="com.nazir.interceptor.RestObjectMapper"/>
 	<bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">  
@@ -64,5 +40,53 @@
        </list>
     </property>
    </bean>
+   
+	<!-- 根据客户端的不同的请求决定不同的view进行响应, 如 /blog/1.json /blog/1.xml -->
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="defaultContentType" value="application/json" />
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+			</map>
+		</property>
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<!-- 输出为JSON数据 -->
+				<bean
+					class="com.nazir.utils.RestJacksonJsonView">
+					<property name="objectMapper" ref="objectMapper"/>  
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- MVC拦截器控制 -->
+	<mvc:interceptors>
+		<!-- 多个拦截器,顺序执行 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean
+				class="com.nazir.interceptor.MvcTokenInterceptor">
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<!-- 验证拦截器 -->
+	<bean id="validateInterceptor" class="com.nazir.interceptor.ParamValidateInterceptor" />
+	<!-- spring拦截器控制 -->
+	<aop:config>
+		<aop:pointcut id="controllerOperation"
+			expression="execution(* com.nazir.controller..*Controller.*(..))" />
+		<aop:advisor advice-ref="validateInterceptor"
+			pointcut-ref="controllerOperation" />
+	</aop:config>
+
+	<!-- 异常拦截器 -->
+	<bean id="exceptionResolver" class="com.nazir.interceptor.ExceptionResolver" />
 	
 </beans>

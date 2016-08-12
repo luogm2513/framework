@@ -9,17 +9,17 @@ import com.nazir.validate.annotation.RequireAnno;
 public class LoginParam {
 	
 	@RequireAnno
-	private String loginId;
+	private String mobile;
 	
 	@RequireAnno
 	private String password;
 
-	public String getLoginId() {
-		return loginId;
+	public String getMobile() {
+		return mobile;
 	}
 
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 	public String getPassword() {

@@ -16,11 +16,12 @@ public class UrlRightConstant {
     public static List<String> logUrlList = new ArrayList<String>();
 
     static {
-        notVerifyUrlList.add("/");
+        notVerifyUrlList.add("/account/user/login");
+        notVerifyUrlList.add("/account/user/register");
 
         openUrlList.add("/");
 
-        loginVerifyUrlList.add("/");
+        loginVerifyUrlList.add("/account/user");
 
         dataSignUrlList.add("/");
 

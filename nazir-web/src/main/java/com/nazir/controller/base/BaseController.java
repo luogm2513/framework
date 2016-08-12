@@ -5,5 +5,5 @@ package com.nazir.controller.base;
  *
  */
 public class BaseController {
-
+	
 }

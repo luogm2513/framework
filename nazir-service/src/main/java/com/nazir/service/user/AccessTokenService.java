@@ -5,5 +5,5 @@ package com.nazir.service.user;
  *
  */
 public interface AccessTokenService {
-	public String creatToken(String loginId);
+	public String creatToken();
 }

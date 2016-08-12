@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nazir.dao.user.UserAccountDao">
+	<select id="getById" resultType="com.nazir.dao.user.dataobject.UserAccountDO">
+		SELECT id as userId, mobile, email, user_name as userName, avatar, password
+        FROM user_account
+        WHERE id = #{userId}
+	</select>
+	<select id="getByMobile" resultType="com.nazir.dao.user.dataobject.UserAccountDO">
+		SELECT id as userId, mobile, email, user_name as userName, avatar, password
+        FROM user_account
+        WHERE mobile = #{mobile}
+	</select>
+	<insert id="creatUser" parameterType="com.nazir.service.user.dataobject.RegisterPO" useGeneratedKeys="true" keyProperty="userId">
+		INSERT INTO user_account (mobile, email, password, user_name, avatar, status, gmt_created, gmt_modified)
+		VALUES (#{mobile}, #{email}, #{password}, #{userName}, #{avatar}, 0, NOW(), NOW())
+	</insert>
+
+</mapper>

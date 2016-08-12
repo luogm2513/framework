@@ -1,21 +1,27 @@
 package com.nazir.service.user.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.nazir.dao.user.UserDao;
+import com.nazir.dao.user.UserAccountDao;
 import com.nazir.dao.user.UserLoginDao;
-import com.nazir.dao.user.dataobject.UserDO;
+import com.nazir.dao.user.dataobject.UserAccountDO;
 import com.nazir.dao.user.dataobject.UserLoginDO;
 import com.nazir.service.base.ResponseCode;
 import com.nazir.service.base.ResponseDO;
 import com.nazir.service.user.AccessTokenService;
-import com.nazir.service.user.UserService;
-import com.nazir.service.user.dataobject.UserLoginPO;
+import com.nazir.service.user.UserLoginService;
 
-public class UserServiceImpl implements UserService {
+/**
+ * @author luogm
+ *
+ */
+@Component("userLoginService")
+public class UserLoginServiceImpl implements UserLoginService {
 
 	@Autowired
-	private UserDao userDao;
+	private UserAccountDao userDao;
 	@Autowired
 	private UserLoginDao userLoginDao;
 	@Autowired
@@ -24,7 +30,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseDO<UserLoginDO> getUserLoginByLoginId(String loginId) {
 		ResponseDO<UserLoginDO> responseDO = new ResponseDO<UserLoginDO>();
-		UserLoginDO userLoginDO = userLoginDao.getByLoginId(loginId);
+		UserLoginDO userLoginDO = userLoginDao.getByLoginAccount(loginId);
 		if(userLoginDO != null) {
 			responseDO.setDataResult(userLoginDO);
 		} else {
@@ -35,14 +41,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseDO<UserLoginDO> doLogin(UserLoginPO loginPO) {
+	@Transactional
+	public ResponseDO<UserLoginDO> doLogin(String mobile, String password) {
 		ResponseDO<UserLoginDO> responseDO = new ResponseDO<UserLoginDO>();
-		UserDO userDO = userDao.getByLoginId(loginPO.getLoginId());
+		UserAccountDO userDO = userDao.getByMobile(mobile);
 		if(userDO != null) {
-			if(userDO.getPassword() != null && loginPO.getPassword().equals(userDO.getPassword())) {
+			if(userDO.getPassword() != null && password.equals(userDO.getPassword())) {
 				UserLoginDO userLoginDO = new UserLoginDO();
-				userLoginDO.setLoginId(userDO.getLoginId());
-				userLoginDO.setAccessToken(tokenService.creatToken(loginPO.getLoginId()));
+				userLoginDO.setUserId(userDO.getUserId());
+				userLoginDO.setAccessToken(tokenService.creatToken());
 				userLoginDao.update(userLoginDO);
 				responseDO.setDataResult(userLoginDO);
 			} else {
@@ -52,19 +59,6 @@ public class UserServiceImpl implements UserService {
 		} else {
 			responseDO.setCode(ResponseCode.ERROR);
 			responseDO.setMessage("登录失败，用户不存在!");
-		}
-		return responseDO;
-	}
-
-	@Override
-	public ResponseDO<UserDO> getUserByLoginId(String loginId) {
-		ResponseDO<UserDO> responseDO = new ResponseDO<UserDO>();
-		UserDO userDO = userDao.getByLoginId(loginId);
-		if(userDO != null) {
-			responseDO.setDataResult(userDO);
-		} else {
-			responseDO.setCode(ResponseCode.ERROR);
-			responseDO.setMessage("查询失败，用户不存在!");
 		}
 		return responseDO;
 	}

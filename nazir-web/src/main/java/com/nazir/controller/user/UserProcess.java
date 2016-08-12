@@ -4,16 +4,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.nazir.controller.base.BaseController;
+import com.nazir.controller.user.model.RegisterModel;
+import com.nazir.controller.user.model.UserItem;
 import com.nazir.controller.user.model.UserLoginModel;
 import com.nazir.controller.user.model.UserModel;
 import com.nazir.controller.user.param.LoginParam;
-import com.nazir.controller.user.param.UserParam;
-import com.nazir.dao.user.dataobject.UserDO;
+import com.nazir.controller.user.param.RegisterParam;
+import com.nazir.dao.user.dataobject.UserAccountDO;
 import com.nazir.dao.user.dataobject.UserLoginDO;
 import com.nazir.model.enums.HttpCodeEnum;
 import com.nazir.service.base.ResponseDO;
-import com.nazir.service.user.UserService;
-import com.nazir.service.user.dataobject.UserLoginPO;
+import com.nazir.service.user.AccessTokenService;
+import com.nazir.service.user.UserAccountService;
+import com.nazir.service.user.UserLoginService;
+import com.nazir.service.user.dataobject.RegisterPO;
+import com.nazir.utils.PinYinUtil;
 
 /**
  * @author luogm
@@ -23,18 +28,54 @@ import com.nazir.service.user.dataobject.UserLoginPO;
 public class UserProcess extends BaseController {
 	
 	@Autowired
-    private UserService userService;
+    private UserAccountService userAccountService;
+	@Autowired
+    private UserLoginService userLoginService;
+	@Autowired
+	private AccessTokenService tokenService;
+	
+	public RegisterModel doRegister(RegisterParam registerParam) {
+		RegisterModel registerModel = new RegisterModel();
+		// 验证手机号码是否已被注册
+		if(!checkMobile(registerParam.getMobile())) {
+			registerModel.setCode(HttpCodeEnum.ERROR.getCode());
+			registerModel.setMessage("该手机号已被注册，请直接登录");
+			return registerModel;
+		}
+		RegisterPO registerPO = new RegisterPO();
+		registerPO.setMobile(registerParam.getMobile());
+		registerPO.setUserName(registerParam.getUserName());
+		registerPO.setPassword(registerParam.getPassword());
+		registerPO.setEmail(registerParam.getEmail());
+		registerPO.setPaltType(registerParam.getPaltType());
+		registerPO.setOpenId(registerParam.getOpenId());
+		// 判断头像是否为空，若为空生成姓名首字母的默认头像
+		if(registerParam.getAvatar() == null) {
+			registerPO.setAvatar("/avatar/"+PinYinUtil.getFirstHeadChar(registerParam.getUserName())+".png");
+		} else {
+			registerPO.setAvatar(registerParam.getAvatar());
+		}
+		registerPO.setAccessToken(tokenService.creatToken());
+		ResponseDO<Long> responseDO = userAccountService.doRegister(registerPO);
+		if(responseDO != null && responseDO.isSuccess()) {
+			registerModel.setUserId(responseDO.getDataResult());
+			registerModel.setAvatar(registerPO.getAvatar());
+			registerModel.setAccessToken(registerPO.getAccessToken());
+			return registerModel;
+		} else {
+			registerModel.setCode(HttpCodeEnum.ERROR.getCode());
+			registerModel.setMessage(responseDO.getMessage());
+    		return registerModel;
+		}
+	}
 	
 	public UserLoginModel doLogin(LoginParam loginParam) {
 		UserLoginModel loginModel = new UserLoginModel();
-		UserLoginPO userLoginPO = new UserLoginPO();
-		userLoginPO.setLoginId(loginParam.getLoginId());
-		userLoginPO.setPassword(loginParam.getPassword());
-		ResponseDO<UserLoginDO> responseDO = userService.doLogin(userLoginPO);
+		ResponseDO<UserLoginDO> responseDO = userLoginService.doLogin(loginParam.getMobile(), loginParam.getPassword());
     	if(responseDO != null && responseDO.isSuccess()) {
     		UserLoginDO loginDO = responseDO.getDataResult();
     		if(loginDO != null) {
-    			loginModel.setLoginId(loginDO.getLoginId());
+    			loginModel.setLoginId(loginDO.getLoginAccount());
     			loginModel.setAccessToken(loginDO.getAccessToken());
     		}
     		return loginModel;
@@ -45,21 +86,36 @@ public class UserProcess extends BaseController {
     	}
 	}
 	
-	public UserModel getUser(UserParam userParam) {
+	public UserModel getUserAccount(String mobile) {
 		UserModel userModel = new UserModel();
-		ResponseDO<UserDO> responseDO = userService.getUserByLoginId(userParam.getLoginId());
+		ResponseDO<UserAccountDO> responseDO = userAccountService.getUserByMobile(mobile);
     	if(responseDO != null && responseDO.isSuccess()) {
-    		UserDO userDO = responseDO.getDataResult();
+    		UserAccountDO userDO = responseDO.getDataResult();
     		if(userDO != null) {
-    			userModel.setUserId(userDO.getUserId());
-    			userModel.setLoginId(userDO.getLoginId());
-    			userModel.setName(userDO.getName());
+    			UserItem item = new UserItem();
+    			item.setUserId(userDO.getUserId());
+    			item.setLoginAccount(userDO.getMobile());
+    			item.setUserName(userDO.getUserName());
+    			userModel.setItem(item);
     		}
     		return userModel;
     	} else {
     		userModel.setCode(HttpCodeEnum.ERROR.getCode());
     		userModel.setMessage(responseDO.getMessage());
     		return userModel;
+    	}
+	}
+	
+	/**
+	 * 验证手机是否已经被注册
+	 * @return
+	 */
+	private boolean checkMobile(String mobile) {
+		ResponseDO<UserAccountDO> responseDO = userAccountService.getUserByMobile(mobile);
+		if(responseDO != null && responseDO.isSuccess()) {
+    		return false;
+    	} else {
+    		return true;
     	}
 	}
 }

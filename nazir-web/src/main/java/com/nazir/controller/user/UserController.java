@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nazir.controller.user.model.RegisterModel;
 import com.nazir.controller.user.model.UserLoginModel;
 import com.nazir.controller.user.model.UserModel;
 import com.nazir.controller.user.param.LoginParam;
-import com.nazir.controller.user.param.UserParam;
+import com.nazir.controller.user.param.RegisterParam;
 
 /**
  * @Type TestController
@@ -34,7 +35,13 @@ public class UserController {
     
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public UserModel getUser(@RequestBody UserParam userParam) {
-    	return userProcess.getUser(userParam);
+    public UserModel getUser(LoginParam loginParam) {
+    	return userProcess.getUserAccount(loginParam.getMobile());
+    }
+    
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @ResponseBody
+    public RegisterModel register(@RequestBody RegisterParam registerParam) {
+    	return userProcess.doRegister(registerParam);
     }
 }

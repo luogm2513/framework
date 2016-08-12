@@ -8,15 +8,10 @@ import java.util.Date;
  */
 public class UserLoginDO {
 	
-	private String loginId;
+	private Long userId;
+	private String loginAccount;
     private String accessToken;
     private Date gmtModified;
-	public String getLoginId() {
-		return loginId;
-	}
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
-	}
 	public String getAccessToken() {
 		return accessToken;
 	}
@@ -28,6 +23,18 @@ public class UserLoginDO {
 	}
 	public void setGmtModified(Date gmtModified) {
 		this.gmtModified = gmtModified;
+	}
+	public String getLoginAccount() {
+		return loginAccount;
+	}
+	public void setLoginAccount(String loginAccount) {
+		this.loginAccount = loginAccount;
+	}
+	public Long getUserId() {
+		return userId;
+	}
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
     
 }

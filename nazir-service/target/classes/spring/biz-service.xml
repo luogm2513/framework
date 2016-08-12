@@ -21,11 +21,6 @@
 		</property>
 	</bean>
 	
-	<!-- 载入dao配置 -->
 	<import resource="classpath*:spring/spring-mybatis.xml" />
 	
-	<!-- 业务bean配置 -->
-	<bean id="userService" class="com.nazir.service.user.impl.UserServiceImpl" />
-	<!-- 业务bean配置 -->
-	<bean id="tokenService" class="com.nazir.service.user.impl.AccessTokenServiceImpl" />
 </beans>

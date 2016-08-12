@@ -11,8 +11,8 @@ package com.nazir.model.enums;
 public enum HttpCodeEnum {
 	
 	SUCCESS("200", "请求成功"),
-    ERROR("400", "请求出现错误"),
-    EXCEPTION("500", "服务器异常");
+	ERROR("400", "错误的请求"),
+	EXCEPTION("500", "服务器异常");
 	
 	private HttpCodeEnum(String code, String desc) {
 		this.code = code;
