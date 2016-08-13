@@ -4,16 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.nazir.controller.base.BaseController;
+import com.nazir.controller.base.SimpleFlagModel;
 import com.nazir.controller.user.model.RegisterModel;
 import com.nazir.controller.user.model.UserItem;
 import com.nazir.controller.user.model.UserLoginModel;
 import com.nazir.controller.user.model.UserModel;
+import com.nazir.controller.user.param.CheckCodeParam;
 import com.nazir.controller.user.param.LoginParam;
 import com.nazir.controller.user.param.RegisterParam;
+import com.nazir.controller.user.param.SendCheckCodeParam;
 import com.nazir.dao.user.dataobject.UserAccountDO;
 import com.nazir.dao.user.dataobject.UserLoginDO;
 import com.nazir.model.enums.HttpCodeEnum;
 import com.nazir.service.base.ResponseDO;
+import com.nazir.service.common.CheckCodeService;
 import com.nazir.service.user.AccessTokenService;
 import com.nazir.service.user.UserAccountService;
 import com.nazir.service.user.UserLoginService;
@@ -33,6 +37,8 @@ public class UserProcess extends BaseController {
     private UserLoginService userLoginService;
 	@Autowired
 	private AccessTokenService tokenService;
+	@Autowired
+	private CheckCodeService checkCodeService;
 	
 	public RegisterModel doRegister(RegisterParam registerParam) {
 		RegisterModel registerModel = new RegisterModel();
@@ -104,6 +110,26 @@ public class UserProcess extends BaseController {
     		userModel.setMessage(responseDO.getMessage());
     		return userModel;
     	}
+	}
+	
+	public SimpleFlagModel sendCheckCode(SendCheckCodeParam param) {
+		SimpleFlagModel model = new SimpleFlagModel();
+		ResponseDO<String> responseDO = checkCodeService.sendCheckCode(param.getMobile());
+		if(responseDO != null && !responseDO.isSuccess()) {
+			model.setCode(HttpCodeEnum.ERROR.getCode());
+			model.setMessage(responseDO.getMessage());
+		}
+		return model;
+	}
+	
+	public SimpleFlagModel checkCode(CheckCodeParam param) {
+		SimpleFlagModel model = new SimpleFlagModel();
+		ResponseDO<Boolean> responseDO = checkCodeService.checkCode(param.getMobile(), param.getCheckCode());
+		if(responseDO != null && !responseDO.isSuccess()) {
+			model.setCode(HttpCodeEnum.ERROR.getCode());
+			model.setMessage(responseDO.getMessage());
+		}
+		return model;
 	}
 	
 	/**

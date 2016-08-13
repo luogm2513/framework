@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nazir.controller.base.SimpleFlagModel;
 import com.nazir.controller.user.model.RegisterModel;
 import com.nazir.controller.user.model.UserLoginModel;
 import com.nazir.controller.user.model.UserModel;
+import com.nazir.controller.user.param.CheckCodeParam;
 import com.nazir.controller.user.param.LoginParam;
 import com.nazir.controller.user.param.RegisterParam;
+import com.nazir.controller.user.param.SendCheckCodeParam;
 
 /**
  * @Type TestController
@@ -35,7 +38,7 @@ public class UserController {
     
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public UserModel getUser(LoginParam loginParam) {
+    public UserModel getUser(@RequestBody LoginParam loginParam) {
     	return userProcess.getUserAccount(loginParam.getMobile());
     }
     
@@ -43,5 +46,17 @@ public class UserController {
     @ResponseBody
     public RegisterModel register(@RequestBody RegisterParam registerParam) {
     	return userProcess.doRegister(registerParam);
+    }
+    
+    @RequestMapping(value = "/sendCheckCode", method = RequestMethod.POST)
+    @ResponseBody
+    public SimpleFlagModel sendCheckCode(@RequestBody SendCheckCodeParam param) {
+    	return userProcess.sendCheckCode(param);
+    }
+    
+    @RequestMapping(value = "/checkCode", method = RequestMethod.POST)
+    @ResponseBody
+    public SimpleFlagModel checkCode(@RequestBody CheckCodeParam param) {
+    	return userProcess.checkCode(param);
     }
 }

@@ -70,4 +70,39 @@ public class UserControllerTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void sendCheckCode() {
+		try{
+			HttpClient httpClient = new HttpClient();
+			PostMethod post = new PostMethod("http://127.0.0.1:8080/account/user/sendCheckCode");
+			JSONObject json = new JSONObject();
+			json.put("mobile", "18700000000");
+			post.setRequestEntity(new StringRequestEntity(json.toString(), "application/json", "utf-8"));
+			int result = httpClient.executeMethod(post);
+			System.out.println("Response status code: " + result);
+			System.out.println("Response body: ");
+			System.out.println(post.getResponseBodyAsString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void checkCode() {
+		try{
+			HttpClient httpClient = new HttpClient();
+			PostMethod post = new PostMethod("http://127.0.0.1:8080/account/user/checkCode");
+			JSONObject json = new JSONObject();
+			json.put("mobile", "18700000000");
+			json.put("checkCode", "083451");
+			post.setRequestEntity(new StringRequestEntity(json.toString(), "application/json", "utf-8"));
+			int result = httpClient.executeMethod(post);
+			System.out.println("Response status code: " + result);
+			System.out.println("Response body: ");
+			System.out.println(post.getResponseBodyAsString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
